@@ -1,0 +1,81 @@
+<div class="max-score">
+  Max score for this song is
+  <strong>{maxPointsForSong.toLocaleString()}</strong> points
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Percent</th>
+      <th>Min. points</th>
+    </tr>
+  </thead>
+  <tbody>
+    {#each ranks as rank (rank.name)}
+    <tr>
+      <td>{rank.name}</td>
+      <td>{toPercent(rank.percent)}</td>
+      <td>{pointsPerRank(maxPointsForSong, rank.percent).toLocaleString()}</td>
+    </tr>
+    {/each}
+  </tbody>
+</table>
+
+<style>
+  table,
+  table thead th,
+  table tbody td {
+    border: 1px solid gray;
+    border-collapse: collapse;
+  }
+
+  table thead th,
+  table tbody td {
+    padding: 0.25rem;
+  }
+
+  table tbody tr td:nth-child(1) {
+    text-align: center;
+  }
+  table tbody tr td:nth-child(2),
+  table tbody tr td:nth-child(3) {
+    text-align: right;
+  }
+
+  .max-score {
+    margin: 0.5rem 0;
+  }
+</style>
+
+<script>
+  import maxPoints from "../lib/maxpoints.js";
+
+  export default {
+    data() {
+      return {
+        ranks: [
+          { name: "SSS", percent: 1 },
+          { name: "SS", percent: 0.9 },
+          { name: "S", percent: 0.8 },
+          { name: "A", percent: 0.65 },
+          { name: "B", percent: 0.5 },
+          { name: "C", percent: 0.35 },
+          { name: "D", percent: 0.2 }
+        ]
+      };
+    },
+
+    computed: {
+      maxPointsForSong: ({ blocks, maxScorePerBlock }) =>
+        maxPoints(blocks, maxScorePerBlock)
+    },
+
+    helpers: {
+      toPercent: val => Math.round(val * 100) + "%",
+
+      pointsPerRank: (maxPointsForSong, percent) =>
+        Math.floor(maxPointsForSong * percent)
+    }
+  };
+</script>

@@ -1,7 +1,27 @@
-<h1>Hello {name}!</h1>
+<h1><span class="beat">Beat</span> <span class="saber">Saber</span> calculator</h1>
+
+<label>Number of blocks</label>
+<input bind:value="blocks" />
+
+<ScoreTable {blocks} {maxScorePerBlock} />
 
 <style>
-	h1 {
-		color: purple;
-	}
+  .beat {color: #d31b12;}
+  .saber {color: #0c75c6;}
+  label {font-weight: 500;}
 </style>
+
+<script>
+	export default {
+		components: {
+			ScoreTable: './components/ScoreTable.html'
+		},
+
+		 data() {
+			 return {
+				blocks: 300,
+				maxScorePerBlock: 110,
+			 }
+		 }
+	};
+</script>
