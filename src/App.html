@@ -1,14 +1,74 @@
-<h1><span class="beat">Beat</span> <span class="saber">Saber</span> calculator</h1>
+<h1><span class="logo"><span class="beat">B<span>e</span>at</span> <span class="saber">Saber</span></span></h1>
+<h2>calculator</h2>
 
-<label>Number of blocks</label>
+<label>Number of blocks in song</label>
 <input bind:value="blocks" />
 
 <ScoreTable {blocks} {maxScorePerBlock} />
 
 <style>
-  .beat {color: #d31b12;}
-  .saber {color: #0c75c6;}
-  label {font-weight: 500;}
+	h1, h2 {
+		font-size: 2.5rem; 
+		font-weight: 500; 
+		font-family: 'BeonRegular', sans-serif;
+		line-height: 1;
+		margin: 0 0 .5rem;
+	}
+
+	h2 {
+		font-size: 1.5rem;
+		letter-spacing: .5rem;
+	}
+
+	.beat {
+	  color: white;
+	  text-shadow:
+            -0.2rem -0.2rem 1rem #fff,
+            0.2rem 0.2rem 1rem #fff,
+            0 0 .25rem var(--neon-beat-color),
+            0 0 .5rem var(--neon-beat-color),
+            0 0 .75rem var(--neon-beat-color),
+            0 0 1rem var(--neon-beat-color),
+            0 0 1.25rem var(--neon-beat-color);
+	}
+	
+	.beat span {
+		animation: flicker 1.5s infinite alternate;
+	}
+  
+	.saber {
+	  color: white;
+
+	  text-shadow:
+            -0.2rem -0.2rem 1rem #fff,
+            0.2rem 0.2rem 1rem #fff,
+            0 0 .25rem var(--neon-saber-color),
+            0 0 .5rem var(--neon-saber-color),
+            0 0 .75rem var(--neon-saber-color),
+            0 0 1rem var(--neon-saber-color),
+            0 0 1.25rem var(--neon-saber-color);
+	}
+
+  	label {font-weight: 500;}
+
+	@keyframes flicker {
+		0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+			color: white;
+			text-shadow:
+				-0.2rem -0.2rem 1rem #fff,
+				0.2rem 0.2rem 1rem #fff,
+				0 0 .25rem var(--neon-beat-color),
+				0 0 .5rem var(--neon-beat-color),
+				0 0 .75rem var(--neon-beat-color),
+				0 0 1rem var(--neon-beat-color),
+				0 0 1.25rem var(--neon-beat-color);
+    	}
+    
+    	20%, 24%, 55% {        
+			text-shadow: none;
+			color: white;
+    	}    
+	}
 </style>
 
 <script>
