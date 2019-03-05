@@ -1,12 +1,20 @@
-<h1><span class="logo"><span class="beat">B<span>e</span>at</span> <span class="saber">Saber</span></span></h1>
-<h2>calculator</h2>
+<div class="container">
+	<h1><span class="logo"><span class="beat">B<span>e</span>at</span> <span class="saber">Saber</span></span></h1>
+	<h2>calculator</h2>
 
-<label>Number of blocks in song</label>
-<input bind:value="blocks" />
+	<label>Number of blocks in song</label>
+	<input bind:value="blocks" />
 
-<ScoreTable {blocks} {maxScorePerBlock} />
+	<ScoreTable {blocks} {maxScorePerBlock} />
+</div>
 
 <style>
+	.container {
+		margin: 0 auto;
+		max-width: 30rem;
+		text-align: center;
+	}
+
 	h1, h2 {
 		font-size: 2.5rem; 
 		font-weight: 500; 
