@@ -1,6 +1,7 @@
-<div class="max-score">
-  Max score for this song is
-  <strong>{maxPointsForSong.toLocaleString()}</strong> points
+{#if blocks && !isNaN(parseInt(blocks, 10)) && blocks >= 0}
+<div class="song-info">
+  <div><label>Blocks:</label> { blocks }</div>
+  <div><label>Max score:</label> <strong>{maxPointsForSong.toLocaleString()}</strong> points</div>
 </div>
 
 <table>
@@ -21,6 +22,7 @@
     {/each}
   </tbody>
 </table>
+{/if}
 
 <style>
   table {margin: 0 auto;}
@@ -44,8 +46,12 @@
     text-align: right;
   }
 
-  .max-score {
+  .song-info {
     margin: 0.5rem 0;
+  }
+  .song-info label {
+    display: inline-block;
+    margin-right: .25rem;
   }
 </style>
 
