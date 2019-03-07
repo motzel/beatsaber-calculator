@@ -1,13 +1,12 @@
 <div>
-  <select bind:value="selectedSong">
-    <option value="{null}">- Select song -</option>
-    {#each allSongs as song, idx}
-    <option value="{song}">
-      {song.album ? song.album + ' / ' : ''} {song.title} {song.level ? ' / ' +
-      song.level : ''}
-    </option>
-    {/each}
-  </select>
+  <Select
+    bind:selectedValue="selectedSong"
+    items="{allSongs}"
+    getOptionLabel="{getOptionLabel}"
+    getSelectionLabel="{getOptionLabel}"
+    placeholder="Select a song..."
+    optionIdentifier="id"
+  ></Select>
 
   {#if selectedSong && !selectedSong.level}
   <div class="custom-song">
@@ -21,16 +20,26 @@
   label {
     display: block;
     font-weight: 500;
-    margin-bottom: .25rem;
+    margin-bottom: 0.25rem;
   }
 
   .custom-song {
     margin-top: 0.5rem;
   }
+
+  .custom-song input {
+    color: #ddd;
+    background-color: black;
+    border-color: #3F4F5F;
+  }
 </style>
 
 <script>
+  import Select from "svelte-select";
+
   export default {
+    components: { Select },
+
     data() {
       return {
         customSongBlocks: 300,
@@ -256,14 +265,19 @@
               { mode: "Two-handed", level: "Expert+", blocks: 587 }
             ]
           }
-        ]
+        ],
+
+        getOptionLabel: (option) => (option.album ? option.album + ' / ' : '') + option.title + (option.level ? ' / ' + option.level : '')
       };
     },
 
     oncreate() {
       const listener = this.on("state", ({ changed, current }) => {
         if (changed.blocks) {
-          this.fire("song-selected", {blocks: current.blocks, song: current.selectedSong});
+          this.fire("song-selected", {
+            blocks: current.blocks,
+            song: current.selectedSong
+          });
         }
       });
 
@@ -271,14 +285,19 @@
     },
 
     computed: {
-      allSongs: ({ songs }) =>
-        songs.reduce((cum, song) => {
+      allSongs: ({ songs }) => {
+        let idx = 0;
+
+        return songs.reduce((cum, song) => {
           let { levels, ...data } = song;
 
           return cum.concat(
-            levels ? levels.map(lvl => Object.assign({}, data, lvl)) : [song]
+            levels
+              ? levels.map(lvl => Object.assign({ id: idx++ }, data, lvl))
+              : [Object.assign({ id: idx++ }, song)]
           );
-        }, []),
+        }, []);
+      },
 
       blocks: ({ selectedSong, customSongBlocks }) => {
         if (!selectedSong) return 0;
