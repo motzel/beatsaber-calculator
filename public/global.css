@@ -1,9 +1,20 @@
-@import url(https://fontlibrary.org/face/beon);
+@font-face {
+  font-family: 'BeonRegular'; src: url('BeonRegular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 :root {
   /* Set neon color */
   --neon-beat-color: #d31b12;
   --neon-saber-color: #0c75c6;
+}
+
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
 html,
@@ -17,27 +28,10 @@ body {
   background-color: black;
   color: white;
   margin: 0;
-  padding: 8px;
+  padding: 1rem;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-}
-
-a {
-  color: rgb(0, 100, 200);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-a:visited {
-  color: rgb(0, 80, 160);
-}
-
-label {
-  display: block;
 }
 
 input,
@@ -51,6 +45,7 @@ textarea {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 2px;
+  max-width: 100%;
 }
 
 input:disabled {
@@ -72,18 +67,4 @@ button:active {
 
 button:focus {
   border-color: #666;
-}
-
-select, input {
-  max-width: 100%;
-}
-
-.github-link {
-  position: absolute;
-  bottom: .25rem;
-  right: .25rem;
-}
-
-.counter {
-  display: none;
 }

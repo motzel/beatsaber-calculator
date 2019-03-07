@@ -1,32 +1,13 @@
 <div class="container">
-	<h1><span class="logo"><span class="beat">B<span>e</span>at</span> <span class="saber">Saber</span></span></h1>
-	<h2>calculator</h2>
+	<Header />
 
-	<select bind:value="selectedSong">
-		<option value="{null}">- Select song -</option>
-		{#each allSongs as song, idx}
-		<option value="{song}">
-			{song.album ? song.album + ' / ' : ''}
-			{song.title}
-			{song.level ? ' / ' + song.level : ''}
-		</option>
-		{/each}
-	</select>
+	<main>
+		<SongSelector on:song-selected="set({blocks: event.blocks, song: event.song})" />
+		<ScoreTable {blocks} {maxScorePerBlock} />
+	</main>
 
-	{#if selectedSong && !selectedSong.level}
-	<div class="custom-song">
-		<label>Number of blocks in custom song</label>
-		<input type="number" min="1" bind:value="customSongBlocks" />
-	</div>
-	{/if}
-
-	<ScoreTable {blocks} {maxScorePerBlock} />
+	<Footer />
 </div>
-
-<span class="github-link">
-	<a class="github-button" href="https://github.com/motzel/beatsaber-calculator" data-show-count="true" aria-label="Star motzel/beatsaber-calculator on GitHub">Star</a>
-	<img class="counter" src="http://bit.ly/2Tku0uS" alt="" />
-</span>
 
 <style>
 	.container {
@@ -35,329 +16,25 @@
 		text-align: center;
 	}
 
-	h1, h2 {
-		font-size: 2.5rem; 
-		font-weight: 500; 
-		font-family: 'BeonRegular', sans-serif;
-		line-height: 1;
-		margin: 0 0 .5rem;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		letter-spacing: .5rem;
-	}
-
-	.beat {
-	  color: white;
-	  text-shadow:
-            -0.2rem -0.2rem 1rem #fff,
-            0.2rem 0.2rem 1rem #fff,
-            0 0 .25rem var(--neon-beat-color),
-            0 0 .5rem var(--neon-beat-color),
-            0 0 .75rem var(--neon-beat-color),
-            0 0 1rem var(--neon-beat-color),
-            0 0 1.25rem var(--neon-beat-color);
-	}
-	
-	.beat span {
-		animation: flicker 1.5s infinite alternate;
-	}
-  
-	.saber {
-	  color: white;
-
-	  text-shadow:
-            -0.2rem -0.2rem 1rem #fff,
-            0.2rem 0.2rem 1rem #fff,
-            0 0 .25rem var(--neon-saber-color),
-            0 0 .5rem var(--neon-saber-color),
-            0 0 .75rem var(--neon-saber-color),
-            0 0 1rem var(--neon-saber-color),
-            0 0 1.25rem var(--neon-saber-color);
-	}
-
-  	label {font-weight: 500;}
-
-	@keyframes flicker {
-		0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-			color: white;
-			text-shadow:
-				-0.2rem -0.2rem 1rem #fff,
-				0.2rem 0.2rem 1rem #fff,
-				0 0 .25rem var(--neon-beat-color),
-				0 0 .5rem var(--neon-beat-color),
-				0 0 .75rem var(--neon-beat-color),
-				0 0 1rem var(--neon-beat-color),
-				0 0 1.25rem var(--neon-beat-color);
-    	}
-    
-    	20%, 24%, 55% {        
-			text-shadow: none;
-			color: white;
-    	}    
-	}
-
-	.custom-song {
-		margin-top: .5rem;
+	main {
+		margin-top: 2rem;
 	}
 </style>
 
 <script>
 	export default {
 		components: {
-			ScoreTable: './components/ScoreTable.html'
+			Header: './components/Header.html',
+			SongSelector: './components/SongSelector.html',
+			ScoreTable: './components/ScoreTable.html',
+			Footer: './components/Footer.html'
 		},
 
 		data() {
-			 return {
+			return {
 				maxScorePerBlock: 110,
-				customSongBlocks: 300,
-
-				selectedSong: null,
-				songs: [
-					{
-						title: "Custom song",
-						artist: "Custom",
-						album: null,
-					},
-					{
-						title: "Pop Stars K/DA",
-						artist: "League of legends",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 226},
-							{mode: "Two-handed", level: "Normal", blocks: 341},
-							{mode: "Two-handed", level: "Hard", blocks: 486},
-							{mode: "Two-handed", level: "Expert", blocks: 679},
-							{mode: "Two-handed", level: "Expert+", blocks: 934},
-						]
-					},
-					{
-						title: "One hope",
-						artist: "Knower",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 286},
-							{mode: "Two-handed", level: "Normal", blocks: 376},
-							{mode: "Two-handed", level: "Hard", blocks: 503},
-							{mode: "Two-handed", level: "Expert", blocks: 731},
-							{mode: "Two-handed", level: "Expert+", blocks: 932},
-						]
-					},
-					{
-						title: "$100 bills",
-						artist: "Jaroslav Beck",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 156},
-							{mode: "Two-handed", level: "Normal", blocks: 196},
-							{mode: "Two-handed", level: "Hard", blocks: 264},
-							{mode: "Two-handed", level: "Expert", blocks: 437},
-							{mode: "Two-handed", level: "Expert+", blocks: 734},
-						]
-					},
-					{
-						title: "Escape ft. Summer Haze",
-						artist: "Jaroslav Beck, Summer Haze",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 157},
-							{mode: "Two-handed", level: "Normal", blocks: 295},
-							{mode: "Two-handed", level: "Hard", blocks: 287},
-							{mode: "Two-handed", level: "Expert", blocks: 399},
-							{mode: "Two-handed", level: "Expert+", blocks: 600},
-						]
-					},
-					{
-						title: "Legend ft. Backchat",
-						artist: "Jaroslav Beck, Backchat, Generdyn",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 150},
-							{mode: "Two-handed", level: "Normal", blocks: 184},
-							{mode: "Two-handed", level: "Hard", blocks: 216},
-							{mode: "Two-handed", level: "Expert", blocks: 285},
-							{mode: "Two-handed", level: "Expert+", blocks: 638},
-						]
-					},
-					{
-						title: "Rum'n'bass",
-						artist: "Boom kitty",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 155},
-							{mode: "Two-handed", level: "Normal", blocks: 285},
-							{mode: "Two-handed", level: "Hard", blocks: 401},
-							{mode: "Two-handed", level: "Expert", blocks: 603},
-							{mode: "Two-handed", level: "Expert+", blocks: 943},
-						]
-					},
-					{
-						title: "Unlimited power ft. Frank Bentley",
-						artist: "Jaroslav Beck",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 124},
-							{mode: "Two-handed", level: "Normal", blocks: 199},
-							{mode: "Two-handed", level: "Hard", blocks: 302},
-							{mode: "Two-handed", level: "Expert", blocks: 380},
-							{mode: "Two-handed", level: "Expert+", blocks: 615},
-						]
-					},
-					{
-						title: "I need you",
-						artist: "Megaphonix",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 145},
-							{mode: "Two-handed", level: "Normal", blocks: 224},
-							{mode: "Two-handed", level: "Hard", blocks: 338},
-							{mode: "Two-handed", level: "Expert", blocks: 423},
-							{mode: "Two-handed", level: "Expert+", blocks: 635},
-						]
-					},
-					{
-						title: "Be there for you ft. Kinnie Lane",
-						artist: "Sedliv",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 146},
-							{mode: "Two-handed", level: "Normal", blocks: 250},
-							{mode: "Two-handed", level: "Hard", blocks: 323},
-							{mode: "Two-handed", level: "Expert", blocks: 519},
-							{mode: "Two-handed", level: "Expert+", blocks: 757},
-						]
-					},
-					{
-						title: "Beat Saber",
-						artist: "Jaroslav Beck",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 94},
-							{mode: "Two-handed", level: "Normal", blocks: 116},
-							{mode: "Two-handed", level: "Hard", blocks: 202},
-							{mode: "Two-handed", level: "Expert", blocks: 267},
-							{mode: "Two-handed", level: "Expert+", blocks: 632},
-						]
-					},
-					{
-						title: "Angel Voices",
-						artist: "Virtual Self",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Hard", blocks: 948},
-							{mode: "Two-handed", level: "Expert", blocks: 1202},
-							{mode: "Two-handed", level: "Expert+", blocks: 1681},
-						]
-					},
-					{
-						title: "Country roads Sqeepo remix",
-						artist: "Jaroslav Beck, Kings&Folks",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 151},
-							{mode: "Two-handed", level: "Normal", blocks: 208},
-							{mode: "Two-handed", level: "Hard", blocks: 295},
-							{mode: "Two-handed", level: "Expert", blocks: 544},
-							{mode: "Two-handed", level: "Expert+", blocks: 773},
-						]
-					},
-					{
-						title: "Balearic pumping",
-						artist: "Jaroslav Beck",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 170},
-							{mode: "Two-handed", level: "Normal", blocks: 239},
-							{mode: "Two-handed", level: "Hard", blocks: 341},
-							{mode: "Two-handed", level: "Expert", blocks: 459},
-							{mode: "Two-handed", level: "Expert+", blocks: 608},
-						]
-					},
-					{
-						title: "Breezer",
-						artist: "Jaroslav Beck",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 106},
-							{mode: "Two-handed", level: "Normal", blocks: 173},
-							{mode: "Two-handed", level: "Hard", blocks: 272},
-							{mode: "Two-handed", level: "Expert", blocks: 356},
-							{mode: "Two-handed", level: "Expert+", blocks: 566},
-						]
-					},
-					{
-						title: "Commercial pumping",
-						artist: "Jaroslav Beck",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 136},
-							{mode: "Two-handed", level: "Normal", blocks: 213},
-							{mode: "Two-handed", level: "Hard", blocks: 329},
-							{mode: "Two-handed", level: "Expert", blocks: 447},
-							{mode: "Two-handed", level: "Expert+", blocks: 848},
-						]
-					},
-					{
-						title: "Elixia",
-						artist: "Mord fustang",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 143},
-							{mode: "Two-handed", level: "Normal", blocks: 300},
-							{mode: "Two-handed", level: "Hard", blocks: 375},
-							{mode: "Two-handed", level: "Expert", blocks: 494},
-							{mode: "Two-handed", level: "Expert+", blocks: 744},
-						]
-					},
-					{
-						title: "Turn me on ft. Tiny C",
-						artist: "Jaroslav Beck, Tiny C",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 121},
-							{mode: "Two-handed", level: "Normal", blocks: 156},
-							{mode: "Two-handed", level: "Hard", blocks: 244},
-							{mode: "Two-handed", level: "Expert", blocks: 341},
-							{mode: "Two-handed", level: "Expert+", blocks: 663},
-						]
-					},
-					{
-						title: "Lvl insane",
-						artist: "Jaroslav Beck",
-						album: "OST Vol. 1",
-						levels: [
-							{mode: "Two-handed", level: "Easy", blocks: 102},
-							{mode: "Two-handed", level: "Normal", blocks: 139},
-							{mode: "Two-handed", level: "Hard", blocks: 198},
-							{mode: "Two-handed", level: "Expert", blocks: 330},
-							{mode: "Two-handed", level: "Expert+", blocks: 587},
-						]
-					},
-				]
-			 }
-		},
-
-		computed: {
-			allSongs: ({songs}) => songs.reduce(
-				(cum, song) => {
-					let {levels, ...data} = song;
-
-					return cum.concat(
-						levels 
-						? levels.map(lvl => Object.assign({}, data, lvl)) 
-						: [song]
-					);
-				}, 
-				[]
-			),
-
-			blocks: ({selectedSong, customSongBlocks}) => {
-				if(!selectedSong) return 0;
-				if(!selectedSong.level) return customSongBlocks;
-
-				return selectedSong.blocks;
+				blocks: 0,
+				song: null,
 			}
 		}
 	};
