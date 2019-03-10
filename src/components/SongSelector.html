@@ -1,19 +1,17 @@
 <div>
-  <Select
-    bind:selectedValue="selectedSong"
-    items="{allSongs}"
-    getOptionLabel="{getOptionLabel}"
-    getSelectionLabel="{getOptionLabel}"
-    placeholder="Select a song..."
-    optionIdentifier="id"
-  ></Select>
+	<Select bind:selectedValue="selectedSong" items="{allSongs}" getOptionLabel="{getOptionLabel}" getSelectionLabel="{getOptionLabel}"
+	 placeholder="Select a song..." optionIdentifier="id" on:clear="set({filters:{}, selectedSong: null})"></Select>
 
-  {#if selectedSong && !selectedSong.level}
-  <div class="custom-song">
-    <label>Number of blocks in custom song</label>
-    <input type="number" min="1" bind:value="customSongBlocks" />
-  </div>
-  {/if}
+	{#if !selectedSong || selectedSong.level}
+	<SongsFilters on:filter-songs="onFilterSongs(event)"></SongsFilters>
+	{/if}
+
+	{#if selectedSong && !selectedSong.level}
+	<div class="custom-song">
+		<label>Number of blocks in custom song</label>
+		<input type="number" min="1" bind:value="customSongBlocks" />
+	</div>
+	{/if}
 </div>
 
 <style>
@@ -30,25 +28,28 @@
   .custom-song input {
     color: #ddd;
     background-color: black;
-    border-color: #3F4F5F;
+    border-color: #3f4f5f;
   }
 </style>
 
 <script>
   import Select from "svelte-select";
+  import SongsFilters from "./SongsFilters.html";
 
   export default {
-    components: { Select },
+    components: { Select, SongsFilters },
 
     data() {
       return {
         customSongBlocks: 300,
 
+        filters: {},
+
         selectedSong: null,
         songs: [
           {
             title: "Custom song",
-            artist: "Custom",
+            artist: null,
             album: null
           },
           {
@@ -267,36 +268,74 @@
           }
         ],
 
-        getOptionLabel: (option) => (option.album ? option.album + ' / ' : '') + option.title + (option.level ? ' / ' + option.level : '')
+        getOptionLabel: option =>
+          (option.album ? option.album + " / " : "") +
+          option.title +
+          (option.level ? " / " + option.level : "")
       };
     },
 
-    oncreate() {
-      const listener = this.on("state", ({ changed, current }) => {
-        if (changed.blocks) {
-          this.fire("song-selected", {
-            blocks: current.blocks,
-            song: current.selectedSong
-          });
-        }
-      });
+    onstate({ changed, current, previous }) {
+      if (changed.blocks) {
+        this.fire("song-selected", {
+          blocks: current.blocks,
+          song: current.selectedSong,
+          yourScore: current.filters.score ? current.filters.score : null
+        });
+      }
 
-      this.on("destroy", listener.cancel);
+      if (changed.filters && current.allSongs.length === 1) {
+        this.set({ selectedSong: current.allSongs[0] });
+
+        this.fire("song-selected", {
+          blocks: current.allSongs[0].blocks
+            ? current.allSongs[0].blocks
+            : current.customSongBlocks,
+          song: current.allSongs[0],
+          yourScore: current.filters.score ? current.filters.score : null
+        });
+      }
     },
 
     computed: {
-      allSongs: ({ songs }) => {
+      allSongs: ({ songs, filters }) => {
         let idx = 0;
 
-        return songs.reduce((cum, song) => {
-          let { levels, ...data } = song;
+        const isPropertyMatch = (value, filter) => {};
+        const isSongMatchFilters = (item, filters) => {
+          for (const filter in filters) {
+            if (["score", "exactMatch"].includes(filter)) continue;
+
+            if (
+              filters[filter] &&
+              (!item[filter] ||
+                (!filters.exactMatch &&
+                  !item[filter]
+                    .toLowerCase()
+                    .includes(filters[filter].toLowerCase())) ||
+                (filters.exactMatch &&
+                  item[filter].toLowerCase() !== filters[filter].toLowerCase()))
+            )
+              return false;
+          }
+
+          return true;
+        };
+
+        let allSongs = songs.reduce((cum, song) => {
+          let levels = song.levels ? [].concat(song.levels) : null;
+          let data = Object.assign({}, song);
+          delete data.levels;
 
           return cum.concat(
-            levels
+            (levels
               ? levels.map(lvl => Object.assign({ id: idx++ }, data, lvl))
               : [Object.assign({ id: idx++ }, song)]
+            ).filter(item => isSongMatchFilters(item, filters))
           );
         }, []);
+
+        return allSongs;
       },
 
       blocks: ({ selectedSong, customSongBlocks }) => {
@@ -304,6 +343,12 @@
         if (!selectedSong.level) return customSongBlocks;
 
         return selectedSong.blocks;
+      }
+    },
+
+    methods: {
+      onFilterSongs(filters) {
+        this.set({ filters });
       }
     }
   };

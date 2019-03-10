@@ -1,0 +1,52 @@
+<div></div>
+
+<style></style>
+
+<script>
+  export default {
+    data() {
+      return {
+        filter: {
+          title: null,
+          artist: null,
+          album: null,
+          level: null,
+          exactMatch: true,
+          score: null
+        },
+
+        paramNames: {
+          t: "title",
+          a: "album",
+          ar: "artist",
+          l: "level",
+          s: "score"
+        }
+      };
+    },
+
+    oncreate() {
+      let { filter, paramNames } = this.get();
+
+      let initFilter = {};
+      let urlParams = new URLSearchParams(window.location.search);
+      for (const i of Object.keys(paramNames)) {
+        if (urlParams.has(i)) initFilter[paramNames[i]] = urlParams.get(i);
+      }
+
+      // check if initFilter is not empty
+      if (Object.keys(initFilter).length) {
+        let s = initFilter.score ? parseInt(initFilter.score, 10) : null;
+
+        initFilter = Object.assign({}, filter, initFilter, {
+          exactMatch: false,
+          score: s && !isNaN(s) ? s : null
+        });
+
+        window.history.replaceState({}, "", "/");
+
+        this.fire("filter-songs", initFilter);
+      }
+    }
+  };
+</script>

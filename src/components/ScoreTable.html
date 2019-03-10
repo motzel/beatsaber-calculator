@@ -1,31 +1,36 @@
 {#if blocks && !isNaN(parseInt(blocks, 10)) && blocks >= 0}
 <div class="song-info">
-  <div><label>Blocks:</label> { blocks }</div>
-  <div><label>Max score:</label> <strong>{maxPointsForSong.toLocaleString()}</strong> points</div>
+	{#if song.artist}<div><label>Artist:</label> { song.artist }</div>{/if}
+	{#if song.album}<div><label>Album:</label> { song.album }</div>{/if}
+	{#if song.mode}<div><label>Mode:</label> { song.mode }</div>{/if}
+	<div><label>Blocks:</label> { blocks }</div>
+	<div><label>Max score:</label> <strong>{maxPointsForSong.toLocaleString()}</strong> points</div>
 </div>
 
 <table>
-  <thead>
-    <tr>
-      <th>Rank</th>
-      <th>Percent</th>
-      <th>Min. points</th>
-    </tr>
-  </thead>
-  <tbody>
-    {#each ranks as rank (rank.name)}
-    <tr>
-      <td>{rank.name}</td>
-      <td>{toPercent(rank.percent)}</td>
-      <td>{pointsPerRank(maxPointsForSong, rank.percent).toLocaleString()}</td>
-    </tr>
-    {/each}
-  </tbody>
+	<thead>
+		<tr>
+			<th>Rank</th>
+			<th>Percent</th>
+			<th>Min. points</th>
+		</tr>
+	</thead>
+	<tbody>
+		{#each ranksSorted as rank (rank.name)}
+		<tr class="{rank.cls}">
+			<td>{rank.name}</td>
+			<td>{formatPercent(rank.percent)}</td>
+			<td>{formatPoints(rank.points)}</td>
+		</tr>
+		{/each}
+	</tbody>
 </table>
 {/if}
 
 <style>
-  table {margin: 0 auto;}
+  table {
+    margin: 0 auto;
+  }
   table,
   table thead th,
   table tbody td {
@@ -51,7 +56,7 @@
   }
   .song-info label {
     display: inline-block;
-    margin-right: .25rem;
+    margin-right: 0.25rem;
   }
 </style>
 
@@ -75,14 +80,42 @@
 
     computed: {
       maxPointsForSong: ({ blocks, maxScorePerBlock }) =>
-        maxPoints(blocks, maxScorePerBlock)
+        maxPoints(blocks, maxScorePerBlock),
+
+      ranksSorted: ({ ranks, yourScore, maxPointsForSong }) => {
+        const pointsPerRank = (maxPointsForSong, percent) =>
+          Math.floor(maxPointsForSong * percent);
+
+        let ret = ranks.map(r =>
+          Object.assign({}, r, {
+            points: pointsPerRank(maxPointsForSong, r.percent),
+            cls: ""
+          })
+        );
+
+        if (yourScore)
+          ret = ret.concat([
+            {
+              name: "Your score",
+              percent: yourScore / maxPointsForSong,
+              points: yourScore,
+              cls: "beat"
+            }
+          ]);
+
+        return ret.sort((a, b) => b.points - a.points);
+      }
     },
 
     helpers: {
-      toPercent: val => Math.round(val * 100) + "%",
+      formatPercent: val =>
+        val.toLocaleString(undefined, {
+          style: "percent",
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1
+        }),
 
-      pointsPerRank: (maxPointsForSong, percent) =>
-        Math.floor(maxPointsForSong * percent)
+      formatPoints: val => val.toLocaleString()
     }
   };
 </script>
