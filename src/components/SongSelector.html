@@ -1,16 +1,20 @@
 <div>
   <Select
     bind:selectedValue="selectedSong"
-    items="{allSongs}"
+    filterText="{filters.title ? filters.title : ''}"
+    items="{filteredSongs}"
     getOptionLabel="{getOptionLabel}"
     getSelectionLabel="{getOptionLabel}"
     placeholder="Select a song..."
     optionIdentifier="id"
-    on:clear="set({filters:{}, selectedSong: null})"
+    on:clear="set({selectedSong: null})"
   ></Select>
 
   {#if !selectedSong || selectedSong.level}
-  <SongsFilters on:filter-songs="onFilterSongs(event)"></SongsFilters>
+  <SongsFilters
+    on:filter-songs="onFilterSongs(event)"
+    {allSongs}
+  ></SongsFilters>
   {/if} {#if selectedSong && !selectedSong.level}
   <div class="custom-song">
     <label>Number of blocks in custom song</label>
@@ -53,7 +57,7 @@
         selectedSong: null,
         songs: [
           {
-            title: "Custom song",
+            title: "-= Custom song =-",
             artist: null,
             album: null
           },
@@ -396,7 +400,8 @@
 
         getOptionLabel: option =>
           option.title +
-          (option.level ? " / " + option.level : "")
+          (option.level ? " / " + option.level : "") +
+          (option.album ? " / " + option.album : "")
       };
     },
 
@@ -409,43 +414,22 @@
         });
       }
 
-      if (changed.filters && current.allSongs.length === 1) {
-        this.set({ selectedSong: current.allSongs[0] });
+      if (changed.filters && current.filteredSongs.length === 1) {
+        this.set({ selectedSong: current.filteredSongs[0] });
 
         this.fire("song-selected", {
-          blocks: current.allSongs[0].blocks
-            ? current.allSongs[0].blocks
+          blocks: current.filteredSongs[0].blocks
+            ? current.filteredSongs[0].blocks
             : current.customSongBlocks,
-          song: current.allSongs[0],
+          song: current.filteredSongs[0],
           yourScore: current.filters.score ? current.filters.score : null
         });
       }
     },
 
     computed: {
-      allSongs: ({ songs, filters }) => {
+      allSongs: ({ songs }) => {
         let idx = 0;
-
-        const isPropertyMatch = (value, filter) => {};
-        const isSongMatchFilters = (item, filters) => {
-          for (const filter in filters) {
-            if (["score", "exactMatch"].includes(filter)) continue;
-
-            if (
-              filters[filter] &&
-              (!item[filter] ||
-                (!filters.exactMatch &&
-                  !item[filter]
-                    .toLowerCase()
-                    .includes(filters[filter].toLowerCase())) ||
-                (filters.exactMatch &&
-                  item[filter].toLowerCase() !== filters[filter].toLowerCase()))
-            )
-              return false;
-          }
-
-          return true;
-        };
 
         let allSongs = songs.reduce((cum, song) => {
           let levels = song.levels ? [].concat(song.levels) : null;
@@ -453,25 +437,35 @@
           delete data.levels;
 
           return cum.concat(
-            (levels
+            levels
               ? levels.map(lvl => Object.assign({ id: idx++ }, data, lvl))
               : [Object.assign({ id: idx++ }, song)]
-            ).filter(item => isSongMatchFilters(item, filters))
           );
         }, []);
 
-        let albumPriorities = {
-          "OST Vol. 1": 1,
-          "OST Vol. 2": 2,
-          "Extras": 3,
-          "Monstercat Music Pack Vol. 1": 4,
+        return allSongs.sort((a, b) => {
+          return a.title.localeCompare(b.title);
+        });
+      },
+
+      filteredSongs: ({ allSongs, filters }) => {
+        const isPropertyMatch = (value, filter) => {};
+        const isSongMatchFilters = (item, filters) => {
+          for (const filter in filters) {
+            if (["score", "title"].includes(filter)) continue;
+
+            if (
+              filters[filter] &&
+              (!item[filter] ||
+                item[filter].toLowerCase() !== filters[filter].toLowerCase())
+            )
+              return false;
+          }
+
+          return true;
         };
 
-        let getAlbumPriority = name => name === null ? 0 : (albumPriorities[name] ? albumPriorities[name] : 1000);
-        return allSongs.sort((a, b) => {
-          let albumDiff = getAlbumPriority(a.album) - getAlbumPriority(b.album);
-          return albumDiff === 0 ? a.title.localeCompare(b.title) : albumDiff;
-        });
+        return allSongs.filter(item => isSongMatchFilters(item, filters));
       },
 
       blocks: ({ selectedSong, customSongBlocks }) => {

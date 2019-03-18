@@ -1,52 +1,124 @@
-<div></div>
+<div class="filter-container">
+  <select bind:value="selectedAlbum">
+    <option value="">Select an album...</option>
+    {#each albums as album}
+    <option value="{album}">{ album }</option>
+    {/each}
+  </select>
 
-<style></style>
+  <select bind:value="selectedLevel">
+    <option value="">Select a level...</option>
+    {#each levels as level}
+    <option value="{level}">{ level }</option>
+    {/each}
+  </select>
+</div>
+
+<style>
+  .filter-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+
+  select {
+    flex: 1 0 49%;
+    max-width: 49%;
+    color: var(--neon-saber-color);
+    background-color: transparent;
+    border-color: var(--neon-saber-color);
+  }
+</style>
 
 <script>
   export default {
     data() {
       return {
+        selectedAlbum: null,
+        selectedLevel: null,
+
         filter: {
           title: null,
           artist: null,
           album: null,
           level: null,
-          exactMatch: true,
           score: null
-        },
-
-        paramNames: {
-          t: "title",
-          a: "album",
-          ar: "artist",
-          l: "level",
-          s: "score"
         }
       };
     },
 
+    onstate({ changed, current, previous }) {
+      let { filter } = this.get();
+
+      if (changed.selectedAlbum) {
+        filter.album = current.selectedAlbum;
+      }
+
+      if (changed.selectedLevel) {
+        filter.level = current.selectedLevel;
+      }
+
+      if (changed.selectedAlbum || changed.selectedLevel) {
+        this.fire("filter-songs", filter);
+      }
+    },
+
     oncreate() {
-      let { filter, paramNames } = this.get();
+      let { filter, allSongs, albums, levels } = this.get();
 
-      let initFilter = {};
       let urlParams = new URLSearchParams(window.location.search);
-      for (const i of Object.keys(paramNames)) {
-        if (urlParams.has(i)) initFilter[paramNames[i]] = urlParams.get(i);
+
+      if (urlParams.has("s")) {
+        let val = parseInt(urlParams.get("s"), 10);
+        if (!isNaN(val)) filter.score = val;
       }
 
-      // check if initFilter is not empty
-      if (Object.keys(initFilter).length) {
-        let s = initFilter.score ? parseInt(initFilter.score, 10) : null;
-
-        initFilter = Object.assign({}, filter, initFilter, {
-          exactMatch: false,
-          score: s && !isNaN(s) ? s : null
-        });
-
-        window.history.replaceState({}, "", "/");
-
-        this.fire("filter-songs", initFilter);
+      if (urlParams.has("l")) {
+        let val = levels.filter(l =>
+          l.toLowerCase().includes(urlParams.get("l").toLowerCase())
+        );
+        if (val.length === 1) filter.level = val[0];
       }
+
+      if (urlParams.has("a")) {
+        let val = albums.filter(a =>
+          a.toLowerCase().includes(urlParams.get("a").toLowerCase())
+        );
+        if (val.length === 1) filter.album = val[0];
+      }
+
+      if (urlParams.has("t")) {
+        let val = Array.from(
+          new Set(
+            allSongs
+              .filter(s => s.title.toLowerCase().includes(urlParams.get("t").toLowerCase()))
+              .map(s => s.title)
+          )
+        );
+        if (val.length === 1) filter.title = val[0];
+      }
+
+      this.set({ selectedAlbum: filter.album, selectedLevel: filter.level });
+
+      this.fire("filter-songs", filter);
+    },
+
+    computed: {
+      levels: ({ allSongs }) =>
+        Object.keys(
+          allSongs.reduce((cum, song) => {
+            if (song.level) cum[song.level] = song.level;
+            return cum;
+          }, {})
+        ),
+
+      albums: ({ allSongs }) =>
+        Object.keys(
+          allSongs.reduce((cum, song) => {
+            if (song.album) cum[song.album] = song.album;
+            return cum;
+          }, {})
+        ).sort()
     }
   };
 </script>
