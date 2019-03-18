@@ -1,17 +1,22 @@
 <div>
-	<Select bind:selectedValue="selectedSong" items="{allSongs}" getOptionLabel="{getOptionLabel}" getSelectionLabel="{getOptionLabel}"
-	 placeholder="Select a song..." optionIdentifier="id" on:clear="set({filters:{}, selectedSong: null})"></Select>
+  <Select
+    bind:selectedValue="selectedSong"
+    items="{allSongs}"
+    getOptionLabel="{getOptionLabel}"
+    getSelectionLabel="{getOptionLabel}"
+    placeholder="Select a song..."
+    optionIdentifier="id"
+    on:clear="set({filters:{}, selectedSong: null})"
+  ></Select>
 
-	{#if !selectedSong || selectedSong.level}
-	<SongsFilters on:filter-songs="onFilterSongs(event)"></SongsFilters>
-	{/if}
-
-	{#if selectedSong && !selectedSong.level}
-	<div class="custom-song">
-		<label>Number of blocks in custom song</label>
-		<input type="number" min="1" bind:value="customSongBlocks" />
-	</div>
-	{/if}
+  {#if !selectedSong || selectedSong.level}
+  <SongsFilters on:filter-songs="onFilterSongs(event)"></SongsFilters>
+  {/if} {#if selectedSong && !selectedSong.level}
+  <div class="custom-song">
+    <label>Number of blocks in custom song</label>
+    <input type="number" min="1" bind:value="customSongBlocks" />
+  </div>
+  {/if}
 </div>
 
 <style>
@@ -265,11 +270,131 @@
               { mode: "Two-handed", level: "Expert", blocks: 330 },
               { mode: "Two-handed", level: "Expert+", blocks: 587 }
             ]
+          },
+          {
+            title: "Boundless",
+            artist: "Aero Chord",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 249 },
+              { mode: "Two-handed", level: "Normal", blocks: 417 },
+              { mode: "Two-handed", level: "Hard", blocks: 568 },
+              { mode: "Two-handed", level: "Expert", blocks: 698 },
+              { mode: "Two-handed", level: "Expert+", blocks: 846 }
+            ]
+          },
+          {
+            title: "Emoji VIP",
+            artist: "Pegboard Nerds",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 305 },
+              { mode: "Two-handed", level: "Normal", blocks: 368 },
+              { mode: "Two-handed", level: "Hard", blocks: 448 },
+              { mode: "Two-handed", level: "Expert", blocks: 630 },
+              { mode: "Two-handed", level: "Expert+", blocks: 768 }
+            ]
+          },
+          {
+            title: "Epic",
+            artist: "Tokyo Machine",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 293 },
+              { mode: "Two-handed", level: "Normal", blocks: 322 },
+              { mode: "Two-handed", level: "Hard", blocks: 424 },
+              { mode: "Two-handed", level: "Expert", blocks: 787 },
+              { mode: "Two-handed", level: "Expert+", blocks: 884 }
+            ]
+          },
+          {
+            title:
+              "Feeling Stronger (feat. Charlotte Colley) [High Maintenance Remix]",
+            artist: "Muzzy",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 247 },
+              { mode: "Two-handed", level: "Normal", blocks: 396 },
+              { mode: "Two-handed", level: "Hard", blocks: 472 },
+              { mode: "Two-handed", level: "Expert", blocks: 671 },
+              { mode: "Two-handed", level: "Expert+", blocks: 932 }
+            ]
+          },
+          {
+            title: "Overkill",
+            artist: "RIOT",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 340 },
+              { mode: "Two-handed", level: "Normal", blocks: 437 },
+              { mode: "Two-handed", level: "Hard", blocks: 603 },
+              { mode: "Two-handed", level: "Expert", blocks: 879 },
+              { mode: "Two-handed", level: "Expert+", blocks: 1308 }
+            ]
+          },
+          {
+            title: "Rattlesnake",
+            artist: "Rogue",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 333 },
+              { mode: "Two-handed", level: "Normal", blocks: 474 },
+              { mode: "Two-handed", level: "Hard", blocks: 658 },
+              { mode: "Two-handed", level: "Expert", blocks: 845 },
+              { mode: "Two-handed", level: "Expert+", blocks: 1071 }
+            ]
+          },
+          {
+            title: "Stronger (feat. Emel)",
+            artist: "Stonebank",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 413 },
+              { mode: "Two-handed", level: "Normal", blocks: 485 },
+              { mode: "Two-handed", level: "Hard", blocks: 564 },
+              { mode: "Two-handed", level: "Expert", blocks: 1035 },
+              { mode: "Two-handed", level: "Expert+", blocks: 1248 }
+            ]
+          },
+          {
+            title: "This Time",
+            artist: "Kayzo",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 204 },
+              { mode: "Two-handed", level: "Normal", blocks: 294 },
+              { mode: "Two-handed", level: "Hard", blocks: 483 },
+              { mode: "Two-handed", level: "Expert", blocks: 608 },
+              { mode: "Two-handed", level: "Expert+", blocks: 919 }
+            ]
+          },
+          {
+            title: "Till It's Over",
+            artist: "Tristam",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 291 },
+              { mode: "Two-handed", level: "Normal", blocks: 421 },
+              { mode: "Two-handed", level: "Hard", blocks: 544 },
+              { mode: "Two-handed", level: "Expert", blocks: 866 },
+              { mode: "Two-handed", level: "Expert+", blocks: 1003 }
+            ]
+          },
+          {
+            title: "We Won't Be Alone (feat. Laura Brehm)",
+            artist: "Feint",
+            album: "Monstercat Music Pack Vol. 1",
+            levels: [
+              { mode: "Two-handed", level: "Easy", blocks: 220 },
+              { mode: "Two-handed", level: "Normal", blocks: 333 },
+              { mode: "Two-handed", level: "Hard", blocks: 491 },
+              { mode: "Two-handed", level: "Expert", blocks: 673 },
+              { mode: "Two-handed", level: "Expert+", blocks: 860 }
+            ]
           }
         ],
 
         getOptionLabel: option =>
-          (option.album ? option.album + " / " : "") +
           option.title +
           (option.level ? " / " + option.level : "")
       };
@@ -335,7 +460,18 @@
           );
         }, []);
 
-        return allSongs;
+        let albumPriorities = {
+          "OST Vol. 1": 1,
+          "OST Vol. 2": 2,
+          "Extras": 3,
+          "Monstercat Music Pack Vol. 1": 4,
+        };
+
+        let getAlbumPriority = name => name === null ? 0 : (albumPriorities[name] ? albumPriorities[name] : 1000);
+        return allSongs.sort((a, b) => {
+          let albumDiff = getAlbumPriority(a.album) - getAlbumPriority(b.album);
+          return albumDiff === 0 ? a.title.localeCompare(b.title) : albumDiff;
+        });
       },
 
       blocks: ({ selectedSong, customSongBlocks }) => {
